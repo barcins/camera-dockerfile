@@ -82,7 +82,12 @@ RUN cd opencvsharp && git fetch --all --tags --prune && git checkout ${OPENCVSHA
 
 RUN python3 -m pip install opencv-contrib-python-headless
 RUN python3 -m pip install opencv-python numpy scipy
+RUN python3 -m pip install icecream
 RUN python3 -m pip install face-recognition
+RUN python3 -m pip install cmake
+RUN python3 -m pip install wheel
+RUN python3 -m pip install dlib --verbose
+RUN python3 -m pip install imutils
 
 
 
