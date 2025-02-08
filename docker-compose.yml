@@ -9,4 +9,4 @@ services:
     environment:
       - DISPLAY=unix$DISPLAY
     devices:
-      - /dev/video0:/dev/video0
+      - /dev/video1:/dev/video0

@@ -4,7 +4,7 @@
 
 import cv2, time
 
-video_capture = cv2.VideoCapture(0)
+video_capture = cv2.VideoCapture(0, cv2.CAP_V4L2)
 time.sleep(2)
 
 if not video_capture.isOpened(): 
