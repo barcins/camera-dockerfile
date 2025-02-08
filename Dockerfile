@@ -1,4 +1,4 @@
-FROM python:3
+FROM nvidia/cuda:9.0-runtime
 # Set the working directory to $APP_USER_HOME
 RUN apt-get update -y
 
