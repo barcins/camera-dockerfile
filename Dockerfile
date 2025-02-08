@@ -45,8 +45,7 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
       libgdiplus 
 
 RUN apt-get update && apt-get install -y libglib2.0-0 libgl1-mesa-glx
-RUN apt-get update && apt-get install -y libjpeg-dev python3 python3-pip python3-opencv numpy scipy
-
+RUN apt-get update && apt-get install -y libjpeg-dev python3 python3-pip python3-opencv 
 
 
 # Setup OpenCV and opencv-contrib sources using the specified release.
@@ -82,7 +81,8 @@ RUN cd opencvsharp && git fetch --all --tags --prune && git checkout ${OPENCVSHA
 
 
 RUN python3 -m pip install opencv-contrib-python-headless
-RUN python3 -m pip install opencv-python
+RUN python3 -m pip install opencv-python numpy scipy
+RUN python3 -m pip install face-recognition
 
 
 
