@@ -1,6 +1,8 @@
 FROM debian:bullseye-slim AS build-native-env
 ARG TARGETPLATFORM
 ENV DEBIAN_FRONTEND=noninteractive
+ENV OPENCV_VER 3.3.0
+
 # 4.7.0: 8 December 2023
 # https://github.com/opencv/opencv/releases/tag/4.7.0
 ENV OPENCV_VERSION=4.7.0
@@ -42,7 +44,8 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
       libdc1394-22-dev \
       libgdiplus 
 
-RUN apt-get update && apt-get install -y libjpeg-dev python3 python3-pip python3-opencv
+RUN apt-get update && apt-get install -y libglib2.0-0 libgl1-mesa-glx
+RUN apt-get update && apt-get install -y libjpeg-dev python3 python3-pip python3-opencv numpy scipy
 
 
 
