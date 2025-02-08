@@ -5,7 +5,6 @@
 import cv2, time
 
 video_capture = cv2.VideoCapture(0, cv2.CAP_V4L2)
-video_capture = cv2.imdecode(video_capture, cv2.IMREAD_COLOR)
 
 time.sleep(2)
 
