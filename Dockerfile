@@ -1,40 +1,97 @@
-# Stage 2: runtime
-FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04
-RUN apt-get update && apt-get -y upgrade
-RUN apt-get -y install build-essential python3-venv
-# Install OpenCV
-COPY --from=requirements /prefix /prefix
-COPY --from=requirements /venv /venv
-
-COPY . /app
-
-ENV PATH="/venv/bin:$PATH"
+FROM debian:bullseye-slim AS build-native-env
+ARG TARGETPLATFORM
+ENV DEBIAN_FRONTEND=noninteractive
+# 4.7.0: 8 December 2023
+# https://github.com/opencv/opencv/releases/tag/4.7.0
+ENV OPENCV_VERSION=4.7.0
+# 4.5.3.20211228: 13 January 2023
+# https://github.com/shimat/opencvsharp/releases/tag/4.7.0.20230114
+ENV OPENCVSHARP_VERSION=4.7.0.20230114
 
 
+RUN mkdir /my_ws
+WORKDIR /my_ws
+RUN apt-get update && apt-get -y install --no-install-recommends \
+      apt-transport-https \
+      software-properties-common \
+      wget \
+      unzip \
+      openssl \
+      cmake \
+      ca-certificates \
+      build-essential \
+      git \
+      ninja-build \
+      libtbb-dev \
+      libatlas-base-dev \
+      libgtk2.0-dev \
+      libavcodec-dev \
+      libavformat-dev \
+      libswscale-dev \
+      libxine2-dev \
+      libv4l-dev \
+      libtheora-dev \
+      libvorbis-dev \
+      libxvidcore-dev \
+      libopencore-amrnb-dev \
+      libopencore-amrwb-dev \
+      libopenjp2-7-dev \
+      libavresample-dev \
+      x264 \
+      libtesseract-dev \
+      libdc1394-22-dev \
+      libgdiplus 
 
-# # Set the working directory to $APP_USER_HOME
-# RUN apt-get update -y
+RUN apt-get update && apt-get install -y libjpeg-dev python3 python3-pip python3-opencv
 
-# RUN apt-get install -y build-essential cmake git libgtk2.0-dev libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libxvidcore-dev libx264-dev libjpeg-dev libpng-dev libtiff-dev libopenexr-dev libatlas-base-dev gfortran libhdf5-dev libhdf5-103 python3-dev python3-pip python3-numpy libatlas3-base
 
-# COPY . /app
 
-# WORKDIR /app 
+# Setup OpenCV and opencv-contrib sources using the specified release.
+RUN wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip && \
+    unzip ${OPENCV_VERSION}.zip && \
+    rm ${OPENCV_VERSION}.zip && \
+    mv opencv-${OPENCV_VERSION} opencv
+RUN wget https://github.com/opencv/opencv_contrib/archive/${OPENCV_VERSION}.zip && \
+    unzip ${OPENCV_VERSION}.zip && \
+    rm ${OPENCV_VERSION}.zip && \
+    mv opencv_contrib-${OPENCV_VERSION} opencv_contrib
 
-# ENV PIP_ROOT_USER_ACTION=ignore
-# ARG DEBIAN_FRONTEND=noninteractive
-# ARG DEBCONF_NOWARNINGS="yes"
+    
+    
+    
+    
+    # cmake and build OpenCV optinally specying architecture related cmake options.
+    RUN cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib/modules-D ENABLE_NEON=ON -D ENABLE_VFPV3=ON \
+    	-D BUILD_TESTS=OFF \
+        -D INSTALL_PYTHON_EXAMPLES=OFF \
+        -D OPENCV_ENABLE_NONFREE=ON \
+    	-D CMAKE_SHARED_LINKER_FLAGS=-latomic \
+    	-D BUILD_EXAMPLES=OFF .. &> cmake.log
+    RUN make -j4 &> make.log
+    RUN make install &> make-install.log
+    RUN ldconfig
+    
 
-# RUN python -m pip install --upgrade pip
+# Download OpenCvSharp to build OpenCvSharpExtern native library
+RUN git clone https://github.com/shimat/opencvsharp.git
+RUN cd opencvsharp && git fetch --all --tags --prune && git checkout ${OPENCVSHARP_VERSION}
 
-# RUN python -m venv /opt/venv
-# ENV PATH="/opt/venv/bin:$PATH"
 
-# COPY requirements.txt .
 
-# RUN pip3 install --verbose numpy==1.17.1
+RUN python3 -m pip install opencv-python
 
-# RUN pip3 install --verbose opencv-python
+
+WORKDIR mkdir /opencvsharp/src
+WORKDIR /my_ws
+COPY . /my_ws
+
+
+
+# Copy the library and dependencies to /artifacts (to be used by images consuming this build)
+# cpld.sh will copy the library we specify (./libOpenCvSharpExtern.so) and any dependencies
+#    to the /artifacts directory. This is useful for sharing the library with other images
+#    consuming this build.
+
 # RUN mkdir /my_ws
 # WORKDIR /my_ws
 # Copy requirements.txt to the working directory
@@ -131,7 +188,8 @@ CMD ["python3", "camera.py"]
 # # docker run -it ubuntu
 # # docker run -it video-stream-app
 # # docker run -it -v /home/noemi/Escritorio/contenedores/cont1:/home opencvcourses/opencv-docker
-
+# docker run -it video-stream-app sh
+# docker run -it webcam bash
 
 
 # '
