@@ -2,7 +2,7 @@ FROM python:3
 # Set the working directory to $APP_USER_HOME
 RUN apt-get update -y
 
-RUN apt-get install -y build-essential cmake git libgtk2.0-dev libavcodec-dev libavformat-dev libswscale-dev 
+RUN apt-get install -y build-essential cmake git libgtk2.0-dev libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libxvidcore-dev libx264-dev libjpeg-dev libpng-dev libtiff-dev libopenexr-dev libatlas-base-dev gfortran libhdf5-dev libhdf5-103 python3-dev python3-pip python3-numpy libatlas3-base
 
 COPY . /app
 
@@ -18,6 +18,8 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 COPY requirements.txt .
+
+RUN pip3 install numpy
 
 RUN pip install --no-cache-dir -r requirements.txt
 # RUN mkdir /my_ws
