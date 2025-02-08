@@ -9,11 +9,15 @@ COPY . /app
 WORKDIR /app 
 
 ENV PIP_ROOT_USER_ACTION=ignore
-
-
-
+ARG DEBIAN_FRONTEND=noninteractive
+ARG DEBCONF_NOWARNINGS="yes"
 
 RUN python -m pip install --upgrade pip
+
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 # RUN mkdir /my_ws
