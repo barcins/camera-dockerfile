@@ -30,8 +30,8 @@ while True:
         print('kamerada görüğntü yok.')
         break
 
-    cv2.namedWindow("Video", 0);
-    cv2.resizeWindow("Video", 800,600);
+    cv2.namedWindow("Video", 0)
+    cv2.resizeWindow("Video", 800,600)
 
 
     # Display the resulting frame
