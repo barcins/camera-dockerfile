@@ -19,9 +19,9 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 COPY requirements.txt .
 
-RUN pip3 install numpy
+RUN pip3 install --verbose numpy==1.17.1
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip3 install --verbose opencv-python
 # RUN mkdir /my_ws
 # WORKDIR /my_ws
 # Copy requirements.txt to the working directory
