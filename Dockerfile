@@ -8,6 +8,10 @@ COPY . /app
 
 WORKDIR /app 
 
+ENV PIP_ROOT_USER_ACTION=ignore
+
+
+
 
 RUN python -m pip install --upgrade pip
 
