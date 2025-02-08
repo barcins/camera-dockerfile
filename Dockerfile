@@ -79,6 +79,8 @@ RUN cd opencvsharp && git fetch --all --tags --prune && git checkout ${OPENCVSHA
 
 
 RUN python3 -m pip install opencv-contrib-python-headless
+RUN python3 -m pip install opencv-python
+
 
 
 WORKDIR mkdir /opencvsharp/src
