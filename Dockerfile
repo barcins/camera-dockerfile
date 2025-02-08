@@ -1,27 +1,40 @@
-FROM nvidia/cuda:9.0-runtime
-# Set the working directory to $APP_USER_HOME
-RUN apt-get update -y
-
-RUN apt-get install -y build-essential cmake git libgtk2.0-dev libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libxvidcore-dev libx264-dev libjpeg-dev libpng-dev libtiff-dev libopenexr-dev libatlas-base-dev gfortran libhdf5-dev libhdf5-103 python3-dev python3-pip python3-numpy libatlas3-base
+# Stage 2: runtime
+FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04
+RUN apt-get update && apt-get -y upgrade
+RUN apt-get -y install build-essential python3-venv
+# Install OpenCV
+COPY --from=requirements /prefix /prefix
+COPY --from=requirements /venv /venv
 
 COPY . /app
 
-WORKDIR /app 
+ENV PATH="/venv/bin:$PATH"
 
-ENV PIP_ROOT_USER_ACTION=ignore
-ARG DEBIAN_FRONTEND=noninteractive
-ARG DEBCONF_NOWARNINGS="yes"
 
-RUN python -m pip install --upgrade pip
 
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+# # Set the working directory to $APP_USER_HOME
+# RUN apt-get update -y
 
-COPY requirements.txt .
+# RUN apt-get install -y build-essential cmake git libgtk2.0-dev libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libxvidcore-dev libx264-dev libjpeg-dev libpng-dev libtiff-dev libopenexr-dev libatlas-base-dev gfortran libhdf5-dev libhdf5-103 python3-dev python3-pip python3-numpy libatlas3-base
 
-RUN pip3 install --verbose numpy==1.17.1
+# COPY . /app
 
-RUN pip3 install --verbose opencv-python
+# WORKDIR /app 
+
+# ENV PIP_ROOT_USER_ACTION=ignore
+# ARG DEBIAN_FRONTEND=noninteractive
+# ARG DEBCONF_NOWARNINGS="yes"
+
+# RUN python -m pip install --upgrade pip
+
+# RUN python -m venv /opt/venv
+# ENV PATH="/opt/venv/bin:$PATH"
+
+# COPY requirements.txt .
+
+# RUN pip3 install --verbose numpy==1.17.1
+
+# RUN pip3 install --verbose opencv-python
 # RUN mkdir /my_ws
 # WORKDIR /my_ws
 # Copy requirements.txt to the working directory
