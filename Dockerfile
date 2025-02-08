@@ -33,6 +33,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y git
 
 RUN apt-get update && apt-get -y install cmake protobuf-compiler
 
+RUN apt-get update && sudo apt-get install -y nvidia-docker2
+
 COPY camera.py /app/camera.py
 
 RUN mkdir /my_ws
