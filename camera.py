@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+# Your code goes below this line
+# 
+
 import cv2, time
 
 video_capture = cv2.VideoCapture(0)
