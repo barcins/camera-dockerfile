@@ -8,7 +8,7 @@ COPY . /app
 
 WORKDIR /app 
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 # RUN mkdir /my_ws
 # WORKDIR /my_ws
 # Copy requirements.txt to the working directory
