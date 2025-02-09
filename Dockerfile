@@ -93,7 +93,7 @@ RUN python3 -m pip install --upgrade pip
 # python kütüphaneleri https://www.tomshardware.com/how-to/raspberry-pi-facial-recognition
 RUN python3 -m pip install face-recognition
 RUN python3 -m pip install imutils
-RUN python3 -m pip install opencv-contrib-python-headless
+#RUN python3 -m pip install opencv-contrib-python-headless
 RUN python3 -m pip install numpy 
 RUN python3 -m pip install scipy
 # ekstra kütüphaneler
@@ -111,7 +111,7 @@ WORKDIR mkdir /opencvsharp/src
 WORKDIR /my_ws
 COPY . /my_ws
 
-RUN python3 -m pip3 install -r requirements.txt
+RUN python3 -m pip install -r requirements.txt
 
 # Copy the library and dependencies to /artifacts (to be used by images consuming this build)
 # cpld.sh will copy the library we specify (./libOpenCvSharpExtern.so) and any dependencies
