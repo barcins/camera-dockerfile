@@ -83,6 +83,8 @@ RUN make -j4 &> make.log
 RUN make install &> make-install.log
 RUN ldconfig
     
+RUN apt update; apt install -y libgl1
+RUN apt-get update && apt-get install -y libglib2.0-0 libgl1-mesa-glx   
 
 # python pip install
 RUN wget https://bootstrap.pypa.io/get-pip.py
@@ -91,7 +93,7 @@ RUN python3 -m pip install --upgrade pip
 # python kütüphaneleri https://www.tomshardware.com/how-to/raspberry-pi-facial-recognition
 RUN python3 -m pip install face-recognition
 RUN python3 -m pip install imutils
-# RUN python3 -m pip install opencv-contrib-python-headless
+RUN python3 -m pip install opencv-contrib-python-headless
 RUN python3 -m pip install numpy 
 RUN python3 -m pip install scipy
 # ekstra kütüphaneler
@@ -101,8 +103,6 @@ RUN python3 -m pip install wheel
 RUN python3 -m pip install dlib --verbose
 #RUN python3 -m pip install opencv-contrib-python==4.1.0.25
 
-RUN apt update; apt install -y libgl1
-RUN apt-get update && apt-get install -y libglib2.0-0 libgl1-mesa-glx   
 
 
 
