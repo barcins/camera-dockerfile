@@ -1,4 +1,4 @@
-FROM balenalib/raspberrypi3-debian-python:latest
+FROM python:slim-buster
 # FROM debian:bullseye-slim AS build-native-env
 
 ARG TARGETPLATFORM
@@ -24,29 +24,29 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
       cmake \
       ca-certificates \
       build-essential \
-      git \
-      ninja-build \
-      libtbb-dev \
-      libatlas-base-dev \
-      libgtk2.0-dev \
-      libavcodec-dev \
-      libavformat-dev \
-      libswscale-dev \
-      libxine2-dev \
-      libv4l-dev \
-      libtheora-dev \
-      libvorbis-dev \
-      libxvidcore-dev \
-      libopencore-amrnb-dev \
-      libopencore-amrwb-dev \
-      libopenjp2-7-dev \
-      libavresample-dev \
-      x264 \
-      libtesseract-dev \
-      libdc1394-22-dev \
-      libgdiplus    
+      git 
+# RUN ninja-build \
+#       libtbb-dev \
+#       libatlas-base-dev \
+#       libgtk2.0-dev \
+#       libavcodec-dev \
+#       libavformat-dev \
+#       libswscale-dev \
+#       libxine2-dev \
+#       libv4l-dev \
+#       libtheora-dev \
+#       libvorbis-dev \
+#       libxvidcore-dev \
+#       libopencore-amrnb-dev \
+#       libopencore-amrwb-dev \
+#       libopenjp2-7-dev \
+#       libavresample-dev \
+#       x264 \
+#       libtesseract-dev \
+#       libdc1394-22-dev \
+#       libgdiplus    
 
-RUN apt-get update && apt-get install -y libglib2.0-0 libgl1-mesa-glx
+# RUN apt-get update && apt-get install -y libglib2.0-0 libgl1-mesa-glx
 RUN apt-get update && apt-get install -y libjpeg-dev python3 python3-pip python3-opencv python3-numpy
 
 # Setup OpenCV and opencv-contrib sources using the specified release.
@@ -60,7 +60,7 @@ RUN wget https://github.com/opencv/opencv_contrib/archive/${OPENCV_VERSION}.zip 
     mv opencv_contrib-${OPENCV_VERSION} opencv_contrib
 
 # https://www.tomshardware.com/how-to/raspberry-pi-facial-recognition gösterilen kütüphaneler
-RUN apt-get update && apt-get -y install cmake build-essential pkg-config git libjpeg-dev libtiff-dev libjasper-dev libpng-dev libwebp-dev libopenexr-dev \
+RUN apt-get update && apt-get -y install cmake build-essential pkg-config git libjpeg-dev libtiff-dev libpng-dev libwebp-dev libopenexr-dev \
 libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libxvidcore-dev libx264-dev libdc1394-22-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev \
 libgtk-3-dev python3-pyqt5 \
 libatlas-base-dev liblapacke-dev gfortran \
@@ -83,13 +83,23 @@ RUN make -j4 &> make.log
 RUN make install &> make-install.log
 RUN ldconfig
     
-RUN apt update; apt install -y libgl1
 RUN apt-get update && apt-get install -y libglib2.0-0 libgl1-mesa-glx   
 
 # python pip install
 RUN wget https://bootstrap.pypa.io/get-pip.py
 RUN python3 get-pip.py
 RUN python3 -m pip install --upgrade pip
+
+
+
+
+
+WORKDIR mkdir /opencvsharp/src
+WORKDIR /my_ws
+COPY . /my_ws
+
+RUN pip install -r requirements.txt
+
 # python kütüphaneleri https://www.tomshardware.com/how-to/raspberry-pi-facial-recognition
 RUN python3 -m pip install face-recognition
 RUN python3 -m pip install imutils
@@ -101,18 +111,9 @@ RUN python3 -m pip install icecream
 RUN python3 -m pip install cmake
 RUN python3 -m pip install wheel
 RUN python3 -m pip install dlib --verbose
+
+
 #RUN python3 -m pip install opencv-contrib-python==4.1.0.25
-
-
-
-
-
-WORKDIR mkdir /opencvsharp/src
-WORKDIR /my_ws
-COPY . /my_ws
-
-RUN python3 -m pip install -r requirements.txt
-
 # Copy the library and dependencies to /artifacts (to be used by images consuming this build)
 # cpld.sh will copy the library we specify (./libOpenCvSharpExtern.so) and any dependencies
 #    to the /artifacts directory. This is useful for sharing the library with other images
