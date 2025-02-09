@@ -111,7 +111,7 @@ WORKDIR mkdir /opencvsharp/src
 WORKDIR /my_ws
 COPY . /my_ws
 
-
+RUN python3 -m pip3 install -r requirements.txt
 
 # Copy the library and dependencies to /artifacts (to be used by images consuming this build)
 # cpld.sh will copy the library we specify (./libOpenCvSharpExtern.so) and any dependencies
