@@ -1,4 +1,4 @@
-FROM python:slim-buster
+FROM ubuntu:20.04
 # FROM debian:bullseye-slim AS build-native-env
 
 ARG TARGETPLATFORM
