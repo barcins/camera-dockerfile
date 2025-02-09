@@ -12,9 +12,8 @@ services:
       - /dev/video1:/dev/video0
 
     deploy:
-    resources:
-      limits:
-        memory: 512M
-      reservations:
-        memory: 128M
-    memswap_limit: 6G
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
