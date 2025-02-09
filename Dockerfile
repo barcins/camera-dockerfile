@@ -91,7 +91,7 @@ RUN python3 -m pip install --upgrade pip
 # python kütüphaneleri https://www.tomshardware.com/how-to/raspberry-pi-facial-recognition
 RUN python3 -m pip install face-recognition
 RUN python3 -m pip install imutils
-RUN python3 -m pip install opencv-contrib-python-headless
+# RUN python3 -m pip install opencv-contrib-python-headless
 RUN python3 -m pip install numpy 
 RUN python3 -m pip install scipy
 # ekstra kütüphaneler
@@ -99,7 +99,7 @@ RUN python3 -m pip install icecream
 RUN python3 -m pip install cmake
 RUN python3 -m pip install wheel
 RUN python3 -m pip install dlib --verbose
-RUN python3 -m pip install opencv-contrib-python==4.1.0.25
+#RUN python3 -m pip install opencv-contrib-python==4.1.0.25
 
 
 
