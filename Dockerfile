@@ -101,6 +101,9 @@ RUN python3 -m pip install wheel
 RUN python3 -m pip install dlib --verbose
 #RUN python3 -m pip install opencv-contrib-python==4.1.0.25
 
+RUN apt update; apt install -y libgl1
+RUN apt-get update && apt-get install -y libglib2.0-0 libgl1-mesa-glx   
+
 
 
 
