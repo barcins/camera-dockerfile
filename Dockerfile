@@ -1,4 +1,6 @@
-FROM debian:bullseye-slim AS build-native-env
+FROM balenalib/raspberrypi3-debian-python:latest
+# FROM debian:bullseye-slim AS build-native-env
+
 ARG TARGETPLATFORM
 ENV DEBIAN_FRONTEND=noninteractive
 ENV OPENCV_VER 3.3.0
@@ -42,11 +44,10 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
       x264 \
       libtesseract-dev \
       libdc1394-22-dev \
-      libgdiplus 
+      libgdiplus    
 
 RUN apt-get update && apt-get install -y libglib2.0-0 libgl1-mesa-glx
-RUN apt-get update && apt-get install -y libjpeg-dev python3 python3-pip python3-opencv 
-
+RUN apt-get update && apt-get install -y libjpeg-dev python3 python3-pip python3-opencv python3-numpy
 
 # Setup OpenCV and opencv-contrib sources using the specified release.
 RUN wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip && \
@@ -58,36 +59,47 @@ RUN wget https://github.com/opencv/opencv_contrib/archive/${OPENCV_VERSION}.zip 
     rm ${OPENCV_VERSION}.zip && \
     mv opencv_contrib-${OPENCV_VERSION} opencv_contrib
 
-    
-    
-    
-    
-    # cmake and build OpenCV optinally specying architecture related cmake options.
-    RUN cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib/modules-D ENABLE_NEON=ON -D ENABLE_VFPV3=ON \
-    	-D BUILD_TESTS=OFF \
-        -D INSTALL_PYTHON_EXAMPLES=OFF \
-        -D OPENCV_ENABLE_NONFREE=ON \
-    	-D CMAKE_SHARED_LINKER_FLAGS=-latomic \
-    	-D BUILD_EXAMPLES=OFF .. &> cmake.log
-    RUN make -j4 &> make.log
-    RUN make install &> make-install.log
-    RUN ldconfig
-    
+# https://www.tomshardware.com/how-to/raspberry-pi-facial-recognition gösterilen kütüphaneler
+RUN apt-get update && apt-get -y install cmake build-essential pkg-config git libjpeg-dev libtiff-dev libjasper-dev libpng-dev libwebp-dev libopenexr-dev \
+libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libxvidcore-dev libx264-dev libdc1394-22-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev \
+libgtk-3-dev python3-pyqt5 \
+libatlas-base-dev liblapacke-dev gfortran \
+libhdf5-dev libhdf5-103	\
+python3-dev python3-pip python3-numpy
+
 
 # Download OpenCvSharp to build OpenCvSharpExtern native library
 RUN git clone https://github.com/shimat/opencvsharp.git
 RUN cd opencvsharp && git fetch --all --tags --prune && git checkout ${OPENCVSHARP_VERSION}
+    
+# cmake and build OpenCV optinally specying architecture related cmake options.
+RUN cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib/modules-D ENABLE_NEON=ON -D ENABLE_VFPV3=ON \
+    -D BUILD_TESTS=OFF \
+    -D INSTALL_PYTHON_EXAMPLES=OFF \
+    -D OPENCV_ENABLE_NONFREE=ON \
+    -D CMAKE_SHARED_LINKER_FLAGS=-latomic \
+    -D BUILD_EXAMPLES=OFF .. &> cmake.log
+RUN make -j4 &> make.log
+RUN make install &> make-install.log
+RUN ldconfig
+    
 
-
-
-RUN python3 -m pip install opencv-contrib-python-headless
-RUN python3 -m pip install opencv-python numpy scipy
-RUN python3 -m pip install icecream
+# python pip install
+RUN wget https://bootstrap.pypa.io/get-pip.py
+RUN python3 get-pip.py
+RUN python3 -m pip install --upgrade pip
+# python kütüphaneleri https://www.tomshardware.com/how-to/raspberry-pi-facial-recognition
 RUN python3 -m pip install face-recognition
+RUN python3 -m pip install imutils
+RUN python3 -m pip install opencv-python numpy scipy
+# ekstra kütüphaneler
+RUN python3 -m pip install opencv-contrib-python-headless
+RUN python3 -m pip install icecream
 RUN python3 -m pip install cmake
 RUN python3 -m pip install wheel
 RUN python3 -m pip install dlib --verbose
-RUN python3 -m pip install imutils
+RUN python3 -m pip install opencv-contrib-python==4.1.0.25
+
 
 
 
