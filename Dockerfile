@@ -5,26 +5,26 @@ ARG TARGETPLATFORM
 ENV DEBIAN_FRONTEND=noninteractive
 ENV OPENCV_VER 3.3.0
 
+
 # 4.7.0: 8 December 2023
 # https://github.com/opencv/opencv/releases/tag/4.7.0
 ENV OPENCV_VERSION=4.7.0
-# 4.5.3.20211228: 13 January 2023
-# https://github.com/shimat/opencvsharp/releases/tag/4.7.0.20230114
-ENV OPENCVSHARP_VERSION=4.7.0.20230114
+
 
 
 RUN mkdir /my_ws
 WORKDIR /my_ws
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
-      apt-transport-https \
-      software-properties-common \
-      wget \
-      unzip \
-      openssl \
-      cmake \
-      ca-certificates \
-      build-essential \
-      git 
+    apt-utils \
+    apt-transport-https \
+    software-properties-common \
+    wget \
+    unzip \
+    openssl \
+    cmake \
+    ca-certificates \
+    build-essential \
+    git 
 # RUN ninja-build \
 #       libtbb-dev \
 #       libatlas-base-dev \
@@ -47,7 +47,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install --no-ins
 #       libgdiplus    
 
 # RUN apt-get update && apt-get install -y libglib2.0-0 libgl1-mesa-glx
-RUN apt-get update && apt-get install -y libjpeg-dev python3 python3-pip python3-opencv python3-numpy
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y libjpeg-dev python3 python3-pip python3-opencv python3-numpy
 
 # Setup OpenCV and opencv-contrib sources using the specified release.
 RUN wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip && \
@@ -83,7 +83,7 @@ RUN make -j4 &> make.log
 RUN make install &> make-install.log
 RUN ldconfig
     
-RUN apt-get update && apt-get install -y libglib2.0-0 libgl1-mesa-glx   
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y libglib2.0-0 libgl1-mesa-glx   
 
 # python pip install
 RUN wget https://bootstrap.pypa.io/get-pip.py
@@ -97,6 +97,7 @@ RUN python3 -m pip install --upgrade pip
 WORKDIR mkdir /opencvsharp/src
 WORKDIR /my_ws
 COPY . /my_ws
+RUN pip install --root-user-action=ignore
 
 RUN pip install -r requirements.txt
 
