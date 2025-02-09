@@ -97,9 +97,8 @@ RUN python3 -m pip install --upgrade pip
 WORKDIR mkdir /opencvsharp/src
 WORKDIR /my_ws
 COPY . /my_ws
-RUN pip install --root-user-action=ignore
-
-RUN pip install -r requirements.txt
+# Install the Python dependencies on the virtual environment
+RUN pip install -r requirements.txt --root-user-action=ignore
 
 # python kütüphaneleri https://www.tomshardware.com/how-to/raspberry-pi-facial-recognition
 RUN python3 -m pip install face-recognition
