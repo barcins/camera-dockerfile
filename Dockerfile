@@ -15,7 +15,7 @@ ENV OPENCVSHARP_VERSION=4.7.0.20230114
 
 RUN mkdir /my_ws
 WORKDIR /my_ws
-RUN apt-get update && apt-get -y install --no-install-recommends \
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
       apt-transport-https \
       software-properties-common \
       wget \
@@ -60,7 +60,7 @@ RUN wget https://github.com/opencv/opencv_contrib/archive/${OPENCV_VERSION}.zip 
     mv opencv_contrib-${OPENCV_VERSION} opencv_contrib
 
 # https://www.tomshardware.com/how-to/raspberry-pi-facial-recognition gösterilen kütüphaneler
-RUN apt-get update && apt-get -y install cmake build-essential pkg-config git libjpeg-dev libtiff-dev libpng-dev libwebp-dev libopenexr-dev \
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install cmake build-essential pkg-config git libjpeg-dev libtiff-dev libpng-dev libwebp-dev libopenexr-dev \
 libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libxvidcore-dev libx264-dev libdc1394-22-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev \
 libgtk-3-dev python3-pyqt5 \
 libatlas-base-dev liblapacke-dev gfortran \
